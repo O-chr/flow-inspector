@@ -1,0 +1,16 @@
+{
+  "name": "flow-inspector-marketplace",
+  "owner": {
+    "name": "chr"
+  },
+  "metadata": {
+    "description": "Marketplace hosting the flow-inspector plugin."
+  },
+  "plugins": [
+    {
+      "name": "flow-inspector",
+      "source": "./",
+      "description": "Claude Codeの設定をフロー図で可視化・編集するダッシュボード。"
+    }
+  ]
+}

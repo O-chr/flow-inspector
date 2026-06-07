@@ -1,0 +1,21 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+*.log
+.DS_Store
+.cache/
+data/
+boards/
+eval/
+.venv/
+# 個人用ローカルメモ（VPS接続情報など）— 絶対に公開しない
+CLAUDE.local.md
+**/CLAUDE.local.md
+
+# 内部開発ドキュメント（公開しない）— 設計メモ・引き継ぎ書・デプロイ手順を含み、
+# 特定マシン/プロジェクト固有の情報が混ざるため公開対象外。docs/llm-chats-map.md だけは公開する。
+docs/superpowers/
+docs/specs/
+
+# 旧モノリス等のローカルバックアップ
+static.bak-*/

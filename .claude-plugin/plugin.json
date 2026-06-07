@@ -1,0 +1,19 @@
+{
+  "name": "flow-inspector",
+  "version": "0.1.0",
+  "description": "Claude Codeの設定（スキル・フック・コマンド・MCP）をフロー図で可視化・編集するダッシュボード。.claude/ディレクトリを自動パースしてインタラクティブな図を生成。",
+  "author": {
+    "name": "chr"
+  },
+  "keywords": [
+    "visualization",
+    "workflow",
+    "skills",
+    "hooks",
+    "dashboard",
+    "flow-diagram"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/chr/flow-inspector",
+  "repository": "https://github.com/chr/flow-inspector"
+}
