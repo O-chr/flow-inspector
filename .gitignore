@@ -19,3 +19,7 @@ docs/specs/
 
 # 旧モノリス等のローカルバックアップ
 static.bak-*/
+
+# フロントエンドソース（web/）のビルド成果物・依存（成果物は static/ にコミット済み）
+web/node_modules/
+web/dist/

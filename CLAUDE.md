@@ -10,7 +10,7 @@ Claude Code プラグイン。インストールした PC の Claude Code 設定
 - 起動：リポ直下で `uvicorn server.main:app --host 127.0.0.1 --port 8077` → `http://127.0.0.1:8077/` で `static/index.html` が配信される。
 - 環境変数：`FLOW_INSPECTOR_PORT`（既定 8077・localhost のみ）、`FLOW_INSPECTOR_PROJECTS_ROOT`（プロジェクト走査ルート・既定 `~/projects`）。
 - テスト：`python -m pytest tests/ -q`（HOME 隔離 conftest・合成データのみ）。
-- フロント：`static/` にビルド済み React（Vite）バンドルを同梱（`static/assets/index-*.js` / `index-*.css`、`static/index.html` はそれを読む薄いローダ）。UI ソースは別管理でビルドし、生成された `static/assets/` をこのリポにコミットする。CDN 依存なし（Web フォントのみ）。
+- フロント：`static/` にビルド済み React（Vite）バンドルを同梱（`static/assets/index-*.js` / `index-*.css`、`static/index.html` はそれを読む薄いローダ）。**UI ソースは `web/`（React 18 + Vite）に同梱**。`cd web && npm install && npm run build`（base=`/static/` 固定）で `web/dist/` を生成し、`static/assets/`・`static/index.html` に反映してコミットする（ソースと成果物を一緒にコミット）。詳細は `BUILD.md`。CDN 依存なし（Web フォントのみ）。
 
 ## プラグインとしての構造（plugin 化）
 
@@ -29,9 +29,10 @@ Claude Code プラグイン。インストールした PC の Claude Code 設定
 - `workspace.py` — 作業用コピー(staging)管理。`_validate_live_path`（書込許可リスト：`$HOME/.claude` 配下、`projects_root` 配下の `CLAUDE.md`/`CLAUDE.local.md` のみ）、staging↔live 変換、`push`（同期＝本番反映）。
 - 補助：`deploy_validate.py`／`flow_codec.py`／`fi_frontmatter.py`（frontmatter は yaml-first＋行フォールバック）／`parser_convention.py`／`drafts.py`／`eval_sandbox.py`（eval のコード評価を制限組み込みで実行）／`annotator.py`・`auto_config.py`（フロー化＝AI 注釈）他。
 
-### フロント `static/`
-- `assets/index-*.js` / `index-*.css` — ビルド済み React（Vite）バンドル。ダッシュボード、フロー図エディタ、設定スタック表示、**CLAUDE.md オーサリングチャット `ClaudeMdChat`** を含む。
-- `index.html` — バンドルを読む薄いローダ。`shared/`・`element-explains.js` 等は素の script で先読みする補助定義。
+### フロント `static/`（成果物）・`web/`（ソース）
+- `static/assets/index-*.js` / `index-*.css` — ビルド済み React（Vite）バンドル。ダッシュボード、フロー図エディタ、設定スタック表示、**CLAUDE.md オーサリングチャット `ClaudeMdChat`** を含む。
+- `static/index.html` — バンドルを読む薄いローダ。`shared/`・`element-explains.js` 等は素の script で先読みする補助定義。
+- `web/` — 上記バンドルの**ソース**（`package.json` / `vite.config.js` / `index.html` / `src/`（`app.jsx`・`main.jsx`・`styles.css`・`features/`・`lib/`）／`public/`（`shared/`・`element-explains.js`））。`npm run build` の base は `/static/` 固定。`web/node_modules/`・`web/dist/` は git 管理外。ビルド手順は `BUILD.md`。
 
 ### その他
 - `tests/` — pytest（HOME 隔離・合成データ）。実行時の状態（作業コピー・flows・eval 等）は `~/.cache/flow-inspector/` 配下に作られ、リポには含めない。

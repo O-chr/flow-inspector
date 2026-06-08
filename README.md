@@ -13,7 +13,7 @@ Flow Inspector は、あなたの PC の Claude Code 設定（**スキル / サ�
 
 - **Claude Code（`claude` CLI）が認証済み**で PATH にあること（AI 補助機能が利用します。API キーは不要）
 - **Python 3.10 以上**（macOS / Linux。Windows は experimental）
-- UI はビルド済みバンドルを同梱しており**オフラインでも起動**します（Web フォントのみ CDN 取得＝オフライン時はシステムフォントにフォールバック）
+- UI はビルド済みバンドルを同梱しており**オフラインでも起動**します（Web フォントのみ CDN 取得＝オフライン時はシステムフォントにフォールバック）。UI ソースは `web/` に同梱、再ビルド手順は [BUILD.md](BUILD.md) 参照
 
 ## インストール
 
@@ -70,7 +70,7 @@ cd "<plugin>" && "$FI_VENV/bin/python" -m uvicorn server.main:app --host 127.0.0
 
 ## 既知の制約
 
-- UI はビルド済み JS/CSS バンドル（`static/assets/`）を同梱。オフラインでも動作します（Web フォントのみ CDN）。
+- UI はビルド済み JS/CSS バンドル（`static/assets/`）を同梱。オフラインでも動作します（Web フォントのみ CDN）。UI ソースは `web/`（React 18 + Vite）に同梱しており、`cd web && npm install && npm run build` で `static/` を再生成できます（詳細は [BUILD.md](BUILD.md)）。
 - eval の **コード評価器は任意の Python を実行**します（サンドボックスは subprocess 分離・環境変数を除去・実行時間制限つきですが、完全な隔離ではありません）。**信頼できるコードのみ登録**してください。サーバーを `127.0.0.1` 以外に公開する場合は特に注意してください。
 - サーバーは `127.0.0.1`（ローカルのみ）にバインドします。
 - Windows サポートは experimental（起動・停止コマンドは macOS / Linux 前提）。
@@ -87,4 +87,11 @@ cd "<plugin>" && "$FI_VENV/bin/python" -m uvicorn server.main:app --host 127.0.0
 ```bash
 pip install -r server/requirements.txt -r requirements-dev.txt
 PYTHONPATH=server python -m pytest tests/ -q
+```
+
+フロントエンド（`web/`）を改変したら、[BUILD.md](BUILD.md) に従って再ビルドし、生成物を `static/` に反映してください:
+
+```bash
+cd web && npm install && npm run build   # base=/static/ で web/dist/ を生成
+# 出力を static/ に反映（BUILD.md 参照）
 ```
