@@ -35,40 +35,61 @@ Claude Code 上でプラグインとして導入します（このリポジト�
 
 依存（FastAPI / uvicorn / PyYAML）の手動インストールは不要です。初回に下記のコマンドを実行したとき、プラグイン外の専用 venv（`~/.cache/flow-inspector/venv`）へ自動で入ります。
 
-## 使い方
+## 使い方（かんたん3ステップ）
 
-スラッシュコマンド:
+エンジニアでなくても大丈夫です。基本はこの3ステップだけ。
+
+### 1. ダッシュボードを開く
+
+Claude Code に、次のコマンドを入力します（`/flow` まで打つと候補から選べます）:
 
 ```
-/flow-inspector:flow-inspector        # ダッシュボードを起動し、ブラウザで http://127.0.0.1:8077 を開く
-/flow-inspector:flow-inspector stop    # 停止
+/flow-inspector:flow-inspector
 ```
 
-> スラッシュコマンドは `プラグイン名:スキル名` の形式です。このプラグインは両方 `flow-inspector` なので `/flow-inspector:flow-inspector` になります。`/` を打つと候補に出ます。
+数秒待つと、ブラウザに「ダッシュボード」の画面が**自動で開きます**。
 
-起動するとブラウザにダッシュボードが開きます。スキルやスラッシュコマンドを**フロー図にしたいときは、その行の「▶ フロー化」ボタンを押します**（押したものだけ AI で解析されます。詳細は下記「トークン消費について」）。
+### 2. 自分の設定をながめる
+
+あなたの Claude Code が「いま、どんなスキル・コマンド・ルール（CLAUDE.md）で動いているか」が一覧で見えます。
+この段階では AI は使われない（＝**料金はかかりません**）ので、安心してクリックして見て回れます。
+
+### 3. 気になるものを「フロー図」にする
+
+中身を詳しく見たいスキルやコマンドの行にある **「▶ フロー化」ボタン**を押します。
+すると、その設定の中身を AI が読み解いて、「何を・どの順番でやるのか」を**図**にしてくれます。
 
 ![スキル一覧と「▶ フロー化」ボタン](docs/images/skills.png)
 
-手動起動（依存はプラグイン外の専用 venv に隔離）:
+- **押したものだけ**が対象です（押さなければ料金はかかりません）。
+- 図になったら、四角（ノード）をクリックして中身を確認・編集できます。
+- 編集しても、画面右上の **「⇡ 同期・反映」を押すまで、あなたの本物の設定ファイルは変わりません**。だから気軽に試せます。
+
+### おわるとき
+
+使い終わったら、次のコマンドで閉じます。
+
+```
+/flow-inspector:flow-inspector stop
+```
+
+> **コマンドが長い理由**: スラッシュコマンドは `プラグイン名:スキル名` という形式で、このプラグインは名前が両方 `flow-inspector` なので `/flow-inspector:flow-inspector` になります。`/flow` まで打って候補から選ぶのが楽です。
+
+### （上級者向け）手動で起動・停止する
+
+スラッシュコマンドを使えば下記は自動で行われます。手動起動は開発・デバッグ用です。
 
 ```bash
-# 1. 専用 venv を用意（初回のみ。依存をシステムや他プロジェクトと混ぜない）
+# 専用 venv を用意（初回のみ。依存をシステムや他プロジェクトと混ぜない）
 FI_VENV="$HOME/.cache/flow-inspector/venv"
 python3 -m venv "$FI_VENV"
 "$FI_VENV/bin/pip" install -r "<plugin>/server/requirements.txt"
 
-# 2. その venv の Python で起動
+# その venv で起動（ポートは環境変数 FLOW_INSPECTOR_PORT で変更可）
 cd "<plugin>" && "$FI_VENV/bin/python" -m uvicorn server.main:app --host 127.0.0.1 --port 8077
-# ポートを変えたい場合は環境変数 FLOW_INSPECTOR_PORT を設定
 ```
 
-> `/flow-inspector:flow-inspector` スラッシュコマンドを使う場合は、上記の venv 準備・起動は自動で行われます（手動起動は開発・デバッグ用）。
-
-停止（手動）:
-
-- macOS / Linux: `pkill -f "uvicorn server.main:app"`
-- Windows: `taskkill /F /IM python.exe`（該当プロセスのみ）
+停止: macOS / Linux は `pkill -f "uvicorn server.main:app"`、Windows は `taskkill /F /IM python.exe`（該当プロセスのみ）。
 
 ## トークン消費について
 
