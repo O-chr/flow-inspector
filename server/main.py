@@ -533,6 +533,7 @@ async def workspace_annotate_all(req: Request, force: bool = False):
             try:
                 res = await annotate_skill_async(path, dry_run=True, variant="v3")
                 ws.write_file(path, res.annotated_text)
+                ws.save_annotation(path, res.annotated_text)  # survives init()
                 annotated.append({"id": flow_id, "nodes": res.nodes_matched})
             except Exception as e:
                 failed.append({"id": flow_id, "error": str(e)})
@@ -701,6 +702,7 @@ async def stage_flow(flow_id: str):
 
     try:
         ws.write_file(source_path, encoded)
+        ws.save_annotation(source_path, encoded)  # builder-saved flow survives init()
     except ValueError as e:
         raise HTTPException(400, str(e))
 
@@ -1264,6 +1266,7 @@ async def _flowize_one(flow_id: str, path: str, src_type: str, name: str, force:
             if not already:
                 ann = await annotate_skill_async(path, dry_run=True, variant="v3")
                 ws.write_file(path, ann.annotated_text)
+                ws.save_annotation(path, ann.annotated_text)  # survives init()
         view = _flowize_view_for_kind(kind)
         _flowize_jobs[flow_id] = {"status": "done", "kind": kind, "view": view, "error": None}
         try:

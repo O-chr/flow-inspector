@@ -36,6 +36,12 @@ class WorkspaceManager:
         # Staged file editor area (mirrors $HOME-relative paths). Independent of
         # the global/project trees used by init/sync/diff.
         self.files_path = self.workspace_path / "files"
+        # Persistent store for flow-ization output (LLM annotations + builder-
+        # encoded flows). Lives OUTSIDE workspace_path so init()'s rmtree never
+        # wipes it; init() re-applies it into a fresh files_path. This is what
+        # makes flow-ization survive a plugin restart without re-spending tokens.
+        # Layout mirrors files_path exactly (same relative keys) for a 1:1 copy.
+        self.annotations_path = self.cache_dir / "annotations"
 
     def is_initialized(self) -> bool:
         """Check if workspace_path exists and has at least one file in it."""
@@ -69,11 +75,37 @@ class WorkspaceManager:
         # Create flows dir
         self.flows_path.mkdir(parents=True, exist_ok=True)
 
+        # Re-apply persisted flow-ization into the fresh staging surface so it
+        # survives this rmtree-and-rebuild. annotations_path lives outside
+        # workspace_path, so it was untouched above.
+        reapplied = self._reapply_annotations()
+
         return {
             "initialized": True,
             "global": bool(global_dir),
             "project": bool(project_dir),
+            "annotations_reapplied": reapplied,
         }
+
+    def _reapply_annotations(self) -> int:
+        """Copy every persisted annotation back into files_path (same rel key).
+
+        Called by init() after the workspace is rebuilt. Returns the number of
+        files re-applied. The overlay (live_to_staged) and push then see the
+        flow-ization exactly as before the restart.
+        """
+        if not self.annotations_path.exists():
+            return 0
+        count = 0
+        for src in self.annotations_path.rglob("*"):
+            if not src.is_file():
+                continue
+            rel = src.relative_to(self.annotations_path)
+            dst = self.files_path / rel
+            dst.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(src, dst)
+            count += 1
+        return count
 
     def _copy_claude_dir(self, src: Path, dst: Path):
         """Copy relevant .claude/ files from src to dst."""
@@ -246,6 +278,43 @@ class WorkspaceManager:
             return Path("/", *rel.parts[1:])
         return Path.home().resolve() / rel
 
+    def _annotation_path(self, live_path) -> Path:
+        """Persistent-store path for a live file, mirroring files_path's layout."""
+        staged = self.live_to_staged(live_path)
+        rel = staged.relative_to(self.files_path)
+        return self.annotations_path / rel
+
+    def save_annotation(self, live_path, content: str) -> Path:
+        """Persist flow-ization output for a live file so it survives init().
+
+        Called from the flow-ization paths (LLM annotate + builder-encoded flow)
+        in addition to the normal staged write. NOT called for plain text edits
+        (the file editor), which are intentionally ephemeral. Returns the path.
+        """
+        dst = self._annotation_path(live_path)
+        dst.parent.mkdir(parents=True, exist_ok=True)
+        dst.write_text(content, encoding="utf-8")
+        return dst
+
+    def remove_annotation(self, live_path) -> bool:
+        """Drop a file's persisted flow-ization (so init() won't resurrect it).
+
+        Called when a staged flow file is discarded. True if something was
+        removed. Best-effort prune of now-empty parent dirs.
+        """
+        dst = self._annotation_path(live_path)
+        existed = dst.is_file()
+        if existed:
+            dst.unlink()
+            parent = dst.parent
+            while parent != self.annotations_path and parent.exists():
+                try:
+                    parent.rmdir()
+                except OSError:
+                    break
+                parent = parent.parent
+        return existed
+
     def classify_layer(self, live_path) -> str:
         """Return the settings-stack layer name a live path belongs to.
 
@@ -365,6 +434,8 @@ class WorkspaceManager:
                 except OSError:
                     break
                 parent = parent.parent
+        # Also drop any persisted flow-ization, else init() would resurrect it.
+        self.remove_annotation(resolved)
         return {"path": str(resolved), "removed": existed}
 
     def list_staged_files(self) -> list:
