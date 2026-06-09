@@ -18,7 +18,7 @@ Claude Code プラグイン。インストールした PC の Claude Code 設定
 
 ## 開発・起動
 
-- 依存：`pip install -r server/requirements.txt`（**fastapi / uvicorn / pyyaml の3つだけ**。`anthropic` 等は使っていない＝import しない）。開発用は `requirements-dev.txt`（pytest 等）。
+- 依存：`pip install -r plugins/flow-inspector/server/requirements.txt`（**fastapi / uvicorn / pyyaml の3つだけ**。`anthropic` 等は使っていない＝import しない）。開発用は `requirements-dev.txt`（pytest 等）。
 - 起動：プラグインディレクトリ（例 `plugins/flow-inspector/`）で `uvicorn server.main:app --host 127.0.0.1 --port 8077` → `http://127.0.0.1:8077/` で `static/index.html` が配信される（英語版は `plugins/flow-inspector-eng/`）。
 - 環境変数：`FLOW_INSPECTOR_PORT`（既定 8077・localhost のみ）、`FLOW_INSPECTOR_PROJECTS_ROOT`（プロジェクト走査ルート・既定 `~/projects`）。
 - テスト：リポ直下で `python -m pytest tests/ -q`（HOME 隔離 conftest・合成データのみ）。conftest は `plugins/flow-inspector/server` を正準バックエンドとして `sys.path` に載せる。

@@ -1,4 +1,4 @@
 # Development / test dependencies.
-# Install with:  pip install -r server/requirements.txt -r requirements-dev.txt
+# Install with:  pip install -r plugins/flow-inspector/server/requirements.txt -r requirements-dev.txt
 pytest>=8
 httpx>=0.27      # required by fastapi.testclient.TestClient

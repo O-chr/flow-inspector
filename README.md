@@ -21,7 +21,7 @@ Flow Inspector automatically scans your Claude Code configuration — **skills /
 
 - **Claude Code (`claude` CLI) must be authenticated** and available on your PATH (used for AI-assisted features; no separate API key required)
 - **Python 3.10 or higher** (macOS / Linux; Windows is experimental)
-- The UI ships with a pre-built bundle and **works offline** (only web fonts are fetched from a CDN — falls back to system fonts when offline). UI source is included in `web/`; see [BUILD.md](BUILD.md) for rebuild instructions.
+- The UI ships with a pre-built bundle and **works offline** (only web fonts are fetched from a CDN — falls back to system fonts when offline). UI source is included in `plugins/flow-inspector-eng/web/`; see [BUILD.md](plugins/flow-inspector-eng/BUILD.md) for rebuild instructions.
 
 ## Installation
 
@@ -142,7 +142,7 @@ Your live `~/.claude/` directory is never modified until you explicitly press "S
 
 ## Known limitations
 
-- The UI ships with a pre-built JS/CSS bundle (`static/assets/`) and works offline (web fonts require CDN access). The UI source is included in `web/` (React 18 + Vite); run `cd web && npm install && npm run build` to regenerate `static/` (see [BUILD.md](BUILD.md) for details).
+- The UI ships with a pre-built JS/CSS bundle (`static/assets/`) and works offline (web fonts require CDN access). The UI source is included in `plugins/flow-inspector-eng/web/` (React 18 + Vite); run `cd plugins/flow-inspector-eng/web && npm install && npm run build` to regenerate `static/` (see [BUILD.md](plugins/flow-inspector-eng/BUILD.md) for details).
 - The eval **code evaluator executes arbitrary Python** (the sandbox uses subprocess isolation, strips environment variables, and enforces a timeout — but it is not a full sandbox). **Only register code you trust.** Exercise particular caution if you expose the server on an address other than `127.0.0.1`.
 - The server binds to `127.0.0.1` (localhost only).
 - Windows support is experimental (start/stop commands assume macOS / Linux).
@@ -157,13 +157,13 @@ Note: the license for this project may change in future versions (each release r
 ## Development & testing
 
 ```bash
-pip install -r server/requirements.txt -r requirements-dev.txt
-PYTHONPATH=server python -m pytest tests/ -q
+pip install -r plugins/flow-inspector-eng/server/requirements.txt -r requirements-dev.txt
+python -m pytest tests/ -q
 ```
 
-If you modify the frontend (`web/`), follow [BUILD.md](BUILD.md) to rebuild and copy the output to `static/`:
+If you modify the frontend (`plugins/flow-inspector-eng/web/`), follow [BUILD.md](plugins/flow-inspector-eng/BUILD.md) to rebuild and copy the output to `static/`:
 
 ```bash
-cd web && npm install && npm run build   # generates web/dist/ with base=/static/
+cd plugins/flow-inspector-eng/web && npm install && npm run build   # generates web/dist/ with base=/static/
 # copy output to static/ (see BUILD.md)
 ```
