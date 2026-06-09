@@ -28,7 +28,7 @@ from typing import Optional
 SCHEMA_VERSION = 1
 
 # Whitelist for flow_id path components — matches the demo dataset's id style
-# ("x-autopilot", "doc_writer", etc.) plus Unicode word characters so project
+# ("example-flow", "doc_writer", etc.) plus Unicode word characters so project
 # names like "日本語プロジェクト名" survive _slugify() without being rejected here.
 # Path separators are blocked explicitly below.
 _FLOW_ID_RE = re.compile(r"^[\w.\-]+$", re.UNICODE)

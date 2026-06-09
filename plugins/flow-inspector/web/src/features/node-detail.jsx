@@ -488,7 +488,7 @@ const NODE_TYPE_FIELDS = {
   hook: [
     { key: "hook_type", label: "タイミング", desc: "フックが実行されるタイミングです。PreToolUse（ツール実行前）やPostToolUse（ツール実行後）など、処理のどの段階で介入するかを決めます。",
       options: ["PreToolUse", "PostToolUse", "PreSubagent", "PostSubagent", "Notification"] },
-    { key: "matcher", label: "対象パターン", desc: "このフックが反応する対象を絞り込むパターンです。例：Skill:x-autopilot なら、x-autopilotスキル実行時のみ発火します。", edit: "text" },
+    { key: "matcher", label: "対象パターン", desc: "このフックが反応する対象を絞り込むパターンです。例：Skill:example-flow なら、example-flowスキル実行時のみ発火します。", edit: "text" },
     { key: "script", label: "スクリプト", desc: "フック実行時に呼び出されるスクリプトファイルです。バリデーション・前処理・ログ記録などの処理を記述します。", edit: "text" },
     { key: "outputs_to", label: "出力先", desc: "処理結果を書き出す先です。ログファイルや外部サービスなど、複数指定できます。", edit: "text" },
   ],

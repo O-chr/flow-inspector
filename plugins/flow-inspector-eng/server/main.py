@@ -226,7 +226,7 @@ class FilePushRequest(BaseModel):
 # ── Helpers ──
 
 def make_address(flow_id: str, node_id: str) -> str:
-    """Generate a copyable address like flow:x-autopilot/n4"""
+    """Generate a copyable address like flow:example-flow/n4"""
     return f"flow:{flow_id}/{node_id}"
 
 def enrich_nodes_with_addresses(flow: dict) -> dict:
@@ -1353,7 +1353,7 @@ def flowize_status(ids: str = ""):
 @app.get("/api/address/{flow_id}/{node_id}")
 def resolve_address(flow_id: str, node_id: str):
     """Resolve an address to its full node data.
-    Usage: GET /api/address/x-autopilot/n4
+    Usage: GET /api/address/example-flow/n4
     """
     flow = _find_flow(flow_id)
     for node in flow.get("nodes", []):
@@ -1532,7 +1532,7 @@ READ_ONLY_PREFIX = """（出力規則・厳守）この対話で使える道具�
 CHAT_SYSTEM_PREFIX = """あなたはFlow Inspector内のAIアシスタントです。Claude Codeのワークフロー（スキル、フック、MCP、サブエージェント）の設計・改善について相談に乗ります。
 
 ルール:
-- ノードアドレス（例: flow:x-autopilot/n3）を使って具体的に参照
+- ノードアドレス（例: flow:example-flow/n3）を使って具体的に参照
 - ユーザーの言語に合わせて回答
 - ワークフローの最適化、プロンプト改善、新ノード追加の提案
 - 簡潔に、しかし正確に回答する

@@ -488,7 +488,7 @@ const NODE_TYPE_FIELDS = {
   hook: [
     { key: "hook_type", label: "Timing", desc: "When the hook runs. Choose at which stage to intervene, such as PreToolUse (before a tool runs) or PostToolUse (after a tool runs).",
       options: ["PreToolUse", "PostToolUse", "PreSubagent", "PostSubagent", "Notification"] },
-    { key: "matcher", label: "Target pattern", desc: "A pattern that narrows down what this hook reacts to. Example: Skill:x-autopilot fires only when the x-autopilot skill runs.", edit: "text" },
+    { key: "matcher", label: "Target pattern", desc: "A pattern that narrows down what this hook reacts to. Example: Skill:example-flow fires only when the example-flow skill runs.", edit: "text" },
     { key: "script", label: "Script", desc: "The script file invoked when the hook runs. Put validation, preprocessing, logging, and similar logic here.", edit: "text" },
     { key: "outputs_to", label: "Output target", desc: "Where to write the results. You can specify multiple destinations such as log files or external services.", edit: "text" },
   ],

@@ -371,8 +371,8 @@ const FI_ELEMENTS = [
       arguments_value: "new feature release",
       expected_io: "Receives topic 'new feature release' → 3 drafts matching past post style + user confirmation → post via X API",
       // ── Skill definition (core capability) ──
-      file: ".claude/skills/x-autopilot/SKILL.md",
-      name: "x-autopilot",
+      file: ".claude/skills/example-flow/SKILL.md",
+      name: "example-flow",
       description: "Activated by 'post to X' or 'make it a tweet'. Generates, confirms, and posts the content.",
       "allowed-tools": ["Read","WebFetch","Bash(curl *)"],
       model: "sonnet",

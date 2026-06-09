@@ -861,7 +861,7 @@ window.FI.TYPE_SPECS = {
       { section: "definition", key: "scripts",         label: "Scripts",           desc: "Executable files under scripts/",                                          multi: true },
       { section: "definition", key: "paths",           label: "Auto-activation Paths", desc: "Auto-fires only when editing files matching this glob",                multi: true },
     ],
-    definition: `---\nname: x-autopilot\ndescription: Activated by "Post to X" or "make a tweet". Generates and posts content.\nallowed-tools: Read WebFetch Bash(curl *)\nmodel: sonnet\n---\n\n# X Autopilot Skill\n\n1. Analyze past posts: !\`cat ~/.x-history.json\`\n2. Read style guide: [style-guide.md](style-guide.md)\n3. Generate new post text, confirm with user, then post`,
+    definition: `---\nname: example-flow\ndescription: Activated by "Post to X" or "make a tweet". Generates and posts content.\nallowed-tools: Read WebFetch Bash(curl *)\nmodel: sonnet\n---\n\n# X Autopilot Skill\n\n1. Analyze past posts: !\`cat ~/.x-history.json\`\n2. Read style guide: [style-guide.md](style-guide.md)\n3. Generate new post text, confirm with user, then post`,
     expandable: true,
   },
   command: {
@@ -1137,7 +1137,7 @@ window.FI.TYPE_SPECS = {
       { key: "name", label: "Plugin Name", desc: "Package name", required: true, authoringOnly: true },
       { key: "version", label: "Version", desc: "Semantic version", required: true, authoringOnly: true },
     ],
-    definition: `// plugin.json\n{\n  "name": "x-autopilot",\n  "version": "1.0.0",\n  "commands": ["commands/post.md"],\n  "skills": ["skills/analyze.md"],\n  "hooks": { ... },\n  "agents": ["agents/writer.md"]\n}`,
+    definition: `// plugin.json\n{\n  "name": "example-flow",\n  "version": "1.0.0",\n  "commands": ["commands/post.md"],\n  "skills": ["skills/analyze.md"],\n  "hooks": { ... },\n  "agents": ["agents/writer.md"]\n}`,
     expandable: true,
   },
   trigger: {
@@ -2200,8 +2200,8 @@ window.FI.ELEMENTS = [
       arguments_value: "new feature release",
       expected_io: "Receive 'new feature release' topic → 3 drafts in the style of past posts + user confirmation → post via X API",
       // ── Skill definition (the core capability) ──
-      file: ".claude/skills/x-autopilot/SKILL.md",
-      name: "x-autopilot",
+      file: ".claude/skills/example-flow/SKILL.md",
+      name: "example-flow",
       description: "Activated by 'post to X' or 'make a tweet'. Generates, confirms, and posts the content.",
       "allowed-tools": ["Read","WebFetch","Bash(curl *)"],
       model: "sonnet",

@@ -861,7 +861,7 @@ window.FI.TYPE_SPECS = {
       { section: "definition", key: "scripts",         label: "付属スクリプト", desc: "scripts/ 配下の実行可能ファイル",                        multi: true },
       { section: "definition", key: "paths",           label: "自動活性化パス", desc: "このグロブにマッチするファイル編集時のみ自動発火",         multi: true },
     ],
-    definition: `---\nname: x-autopilot\ndescription: "Xに投稿して" で起動。投稿文を生成して投稿する。\nallowed-tools: Read WebFetch Bash(curl *)\nmodel: sonnet\n---\n\n# X Autopilot スキル\n\n1. 過去の投稿を分析: !\`cat ~/.x-history.json\`\n2. スタイルガイド参照: [style-guide.md](style-guide.md)\n3. 新規投稿文を生成して、ユーザー確認後に投稿`,
+    definition: `---\nname: example-flow\ndescription: "Xに投稿して" で起動。投稿文を生成して投稿する。\nallowed-tools: Read WebFetch Bash(curl *)\nmodel: sonnet\n---\n\n# X Autopilot スキル\n\n1. 過去の投稿を分析: !\`cat ~/.x-history.json\`\n2. スタイルガイド参照: [style-guide.md](style-guide.md)\n3. 新規投稿文を生成して、ユーザー確認後に投稿`,
     expandable: true,
   },
   command: {
@@ -1137,7 +1137,7 @@ window.FI.TYPE_SPECS = {
       { key: "name", label: "プラグイン名", desc: "パッケージ名", required: true, authoringOnly: true },
       { key: "version", label: "バージョン", desc: "セマンティックバージョン", required: true, authoringOnly: true },
     ],
-    definition: `// plugin.json\n{\n  "name": "x-autopilot",\n  "version": "1.0.0",\n  "commands": ["commands/post.md"],\n  "skills": ["skills/analyze.md"],\n  "hooks": { ... },\n  "agents": ["agents/writer.md"]\n}`,
+    definition: `// plugin.json\n{\n  "name": "example-flow",\n  "version": "1.0.0",\n  "commands": ["commands/post.md"],\n  "skills": ["skills/analyze.md"],\n  "hooks": { ... },\n  "agents": ["agents/writer.md"]\n}`,
     expandable: true,
   },
   trigger: {
@@ -2199,8 +2199,8 @@ window.FI.ELEMENTS = [
       arguments_value: "新機能リリース",
       expected_io: "「新機能リリース」というトピックを受けて → 過去投稿のスタイルに沿った3つのドラフト + ユーザー確認 → X API で投稿",
       // ── スキル定義 (本体の能力) ──
-      file: ".claude/skills/x-autopilot/SKILL.md",
-      name: "x-autopilot",
+      file: ".claude/skills/example-flow/SKILL.md",
+      name: "example-flow",
       description: "「Xに投稿して」「ツイートにして」で起動。投稿文を生成・確認して投稿する。",
       "allowed-tools": ["Read","WebFetch","Bash(curl *)"],
       model: "sonnet",

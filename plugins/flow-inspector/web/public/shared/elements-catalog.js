@@ -370,8 +370,8 @@ const FI_ELEMENTS = [
       arguments_value: "新機能リリース",
       expected_io: "「新機能リリース」というトピックを受けて → 過去投稿のスタイルに沿った3つのドラフト + ユーザー確認 → X API で投稿",
       // ── スキル定義 (本体の能力) ──
-      file: ".claude/skills/x-autopilot/SKILL.md",
-      name: "x-autopilot",
+      file: ".claude/skills/example-flow/SKILL.md",
+      name: "example-flow",
       description: "「Xに投稿して」「ツイートにして」で起動。投稿文を生成・確認して投稿する。",
       "allowed-tools": ["Read","WebFetch","Bash(curl *)"],
       model: "sonnet",
