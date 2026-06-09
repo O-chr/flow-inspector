@@ -29,7 +29,7 @@ Claude Code 上でプラグインとして導入します（このリポジト�
 
 ```
 # 1. このリポジトリをマーケットプレイスとして追加
-/plugin marketplace add chr/flow-inspector
+/plugin marketplace add o-chr/flow-inspector
 
 # 2. プラグインをインストール（日本語UI）
 /plugin install flow-inspector@flow-inspector-marketplace
@@ -38,7 +38,7 @@ Claude Code 上でプラグインとして導入します（このリポジト�
 /plugin install flow-inspector-eng@flow-inspector-marketplace
 ```
 
-> `chr/flow-inspector` は配布元の GitHub `ユーザー名/リポジトリ名` です。フォークやミラーから入れる場合はそこに合わせてください。
+> `o-chr/flow-inspector` は配布元の GitHub `ユーザー名/リポジトリ名` です。フォークやミラーから入れる場合はそこに合わせてください。
 
 依存（FastAPI / uvicorn / PyYAML）の手動インストールは不要です。初回に下記のコマンドを実行したとき、プラグイン外の専用 venv（`~/.cache/flow-inspector/venv`）へ自動で入ります。
 

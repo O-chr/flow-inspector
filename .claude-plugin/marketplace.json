@@ -1,6 +1,6 @@
 {
   "name": "flow-inspector-marketplace",
-  "owner": { "name": "chr" },
+  "owner": { "name": "o-chr" },
   "metadata": {
     "description": "Marketplace hosting the Flow Inspector plugin (English and Japanese editions)."
   },

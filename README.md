@@ -29,7 +29,7 @@ Install as a Claude Code plugin (this repository also serves as its own marketpl
 
 ```
 # 1. Add this repository as a marketplace source
-/plugin marketplace add chr/flow-inspector
+/plugin marketplace add o-chr/flow-inspector
 
 # 2. Install the plugin (English UI)
 /plugin install flow-inspector-eng@flow-inspector-marketplace
@@ -38,7 +38,7 @@ Install as a Claude Code plugin (this repository also serves as its own marketpl
 /plugin install flow-inspector@flow-inspector-marketplace
 ```
 
-> `chr/flow-inspector` refers to the GitHub `username/repository` of the distribution source. If you are installing from a fork or mirror, substitute the appropriate value.
+> `o-chr/flow-inspector` refers to the GitHub `username/repository` of the distribution source. If you are installing from a fork or mirror, substitute the appropriate value.
 
 Dependencies (FastAPI / uvicorn / PyYAML) do not need to be installed manually. The first time you run the command below, they are installed automatically into a dedicated venv outside the plugin directory (`~/.cache/flow-inspector/venv`).
 
