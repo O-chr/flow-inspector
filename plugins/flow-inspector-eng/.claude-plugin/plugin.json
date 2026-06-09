@@ -1,0 +1,19 @@
+{
+  "name": "flow-inspector-eng",
+  "version": "0.1.0",
+  "description": "Visualize and edit your Claude Code configuration (skills, hooks, commands, MCP) as interactive flow diagrams. Auto-parses your .claude/ directory into an interactive dashboard. English edition.",
+  "author": {
+    "name": "chr"
+  },
+  "keywords": [
+    "visualization",
+    "workflow",
+    "skills",
+    "hooks",
+    "dashboard",
+    "flow-diagram"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/chr/flow-inspector",
+  "repository": "https://github.com/chr/flow-inspector"
+}
