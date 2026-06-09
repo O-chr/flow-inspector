@@ -4,23 +4,38 @@ Claude Code プラグイン。インストールした PC の Claude Code 設定
 
 公開方針：**仕組み（ダッシュボード・フロー図・設定スキャン・CLAUDE.md オーサリング）だけ**を公開。特定プロジェクトの中身やデモデータは含めない。ライセンス MIT。
 
+## リポジトリ構成（モノレポ・2エディション）
+
+このリポジトリは **1つのマーケットプレイスに2プラグイン**を載せるモノレポ。
+
+- ルート `/.claude-plugin/marketplace.json` — 両エディションを列挙（`flow-inspector-eng`／`flow-inspector`、`source` は各 `./plugins/<name>`）。
+- `plugins/flow-inspector/` — **日本語UIプラグイン**。`server/`・`static/`・`web/`・`skills/` を自己完結で持つ。
+- `plugins/flow-inspector-eng/` — **英語UIプラグイン**。同じ構造。
+- ルート直下の `tests/`・`requirements-dev.txt`・`scripts/`・`docs/`・`README*.md` は**開発／配布用の共通物**（プラグイン本体ではない）。
+- README は **英語が主**（`README.md`）＋日本語（`README.ja.md`）。スクショは `docs/images/{en,ja}/`。
+
+**バックエンドの共有とドリフト管理**：両プラグインの `server/` は、**表示文字列を翻訳した3ファイル（`parser.py`／`flow_codec.py`／`boards_store.py`）を除いて同一**。日本語側 `plugins/flow-inspector/server` を正とし、`scripts/sync-backend.sh` で英語側へ同期（3ファイルは除外）、`scripts/check-backend-sync.sh` で差分を検査する。**共有バックエンドを直したら必ず sync→check** してから両方をコミットすること。3ファイルのロジックを変える場合は両エディションを手で直す。
+
 ## 開発・起動
 
 - 依存：`pip install -r server/requirements.txt`（**fastapi / uvicorn / pyyaml の3つだけ**。`anthropic` 等は使っていない＝import しない）。開発用は `requirements-dev.txt`（pytest 等）。
-- 起動：リポ直下で `uvicorn server.main:app --host 127.0.0.1 --port 8077` → `http://127.0.0.1:8077/` で `static/index.html` が配信される。
+- 起動：プラグインディレクトリ（例 `plugins/flow-inspector/`）で `uvicorn server.main:app --host 127.0.0.1 --port 8077` → `http://127.0.0.1:8077/` で `static/index.html` が配信される（英語版は `plugins/flow-inspector-eng/`）。
 - 環境変数：`FLOW_INSPECTOR_PORT`（既定 8077・localhost のみ）、`FLOW_INSPECTOR_PROJECTS_ROOT`（プロジェクト走査ルート・既定 `~/projects`）。
-- テスト：`python -m pytest tests/ -q`（HOME 隔離 conftest・合成データのみ）。
-- フロント：`static/` にビルド済み React（Vite）バンドルを同梱（`static/assets/index-*.js` / `index-*.css`、`static/index.html` はそれを読む薄いローダ）。**UI ソースは `web/`（React 18 + Vite）に同梱**。`cd web && npm install && npm run build`（base=`/static/` 固定）で `web/dist/` を生成し、`static/assets/`・`static/index.html` に反映してコミットする（ソースと成果物を一緒にコミット）。詳細は `BUILD.md`。CDN 依存なし（Web フォントのみ）。
+- テスト：リポ直下で `python -m pytest tests/ -q`（HOME 隔離 conftest・合成データのみ）。conftest は `plugins/flow-inspector/server` を正準バックエンドとして `sys.path` に載せる。
+- フロント：各プラグインの `static/` にビルド済み React（Vite）バンドルを同梱（`static/assets/index-*.js` / `index-*.css`、`static/index.html` はそれを読む薄いローダ）。**UI ソースは各プラグインの `web/`（React 18 + Vite）に同梱**。`cd plugins/<edition>/web && npm install && npm run build`（base=`/static/` 固定）で `web/dist/` を生成し、その `static/assets/`・`static/index.html` に反映してコミットする（ソースと成果物を一緒にコミット）。詳細は各 `BUILD.md`。CDN 依存なし（Web フォントのみ）。**UI 文字列はエディションごとに別**（英語版は英訳済み）。
 
 ## プラグインとしての構造（plugin 化）
 
-- `.claude-plugin/plugin.json` — マニフェスト（name=`flow-inspector`／**repository は文字列 URL**。オブジェクトにすると `claude plugin validate` が落ちる）。
-- `.claude-plugin/marketplace.json` — マーケットプレイス定義（name=`flow-inspector-marketplace`／source `"./"`）。**登録にはこのファイルが必須**。
-- `skills/flow-inspector/SKILL.md` — 起動スキル。**自動 venv**（`~/.cache/flow-inspector/venv` を無ければ作り依存を入れて、そこで uvicorn 起動）／二重起動チェック／フロー化の 3 択同意／`disable-model-invocation: true`。
-- インストール：`claude plugin marketplace add <dir>` → `claude plugin install flow-inspector@flow-inspector-marketplace`（`~/.claude/plugins/cache/...` に展開）。
+- `plugins/<edition>/.claude-plugin/plugin.json` — マニフェスト（name=`flow-inspector` または `flow-inspector-eng`／**repository は文字列 URL**。オブジェクトにすると `claude plugin validate` が落ちる）。
+- ルート `.claude-plugin/marketplace.json` — マーケットプレイス定義（name=`flow-inspector-marketplace`／両プラグインを `source: "./plugins/<name>"` で列挙）。**登録にはこのファイルが必須**。
+- `plugins/<edition>/skills/flow-inspector/SKILL.md` — 起動スキル。**自動 venv**（`~/.cache/flow-inspector/venv` を無ければ作り依存を入れて、そこで uvicorn 起動）／二重起動チェック／フロー化の 3 択同意／`disable-model-invocation: true`。
+- インストール：`claude plugin marketplace add <dir>` → `claude plugin install flow-inspector@flow-inspector-marketplace`（英語版は `flow-inspector-eng@flow-inspector-marketplace`。`~/.claude/plugins/cache/...` に展開）。
+- 検証：`claude plugin validate ./plugins/flow-inspector`／`./plugins/flow-inspector-eng`／`.`（marketplace）。
 - **ユーザーデータはパッケージ内に書かない**：作業用コピー・flows・eval 等は `~/.cache/flow-inspector/` に置く（起動 0 トークン／AI を呼ぶのはフロー化とチャットだけ＝同意制）。
 
 ## ファイル地図
+
+> 以下の `server/`・`static/`・`web/` は各プラグイン配下（`plugins/<edition>/`）の相対パス。両エディションで同構造（`server/` は3表示ファイルを除き共有）。
 
 ### バックエンド `server/`（FastAPI 単一アプリ・DB なし・JSON で永続化）
 - `main.py` — 全 API。ダッシュボード（`/api/dashboard*`・`/api/projects`）、ワークスペース（`/api/workspace/*`：本番設定の staging への pull／file 読み書き／**同期(push)**）、チャット（`/api/chat`：`claude` CLI を subprocess 起動して SSE）、eval、CLAUDE.md オーサリング（`build_claude_md_request`／`CLAUDE_MD_SYSTEM`／レイヤー別ガイダンス）。

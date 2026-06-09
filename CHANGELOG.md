@@ -2,6 +2,13 @@
 
 このプロジェクトのバージョンごとの変更点。形式は [Keep a Changelog](https://keepachangelog.com/ja/1.1.0/)、バージョンは [Semantic Versioning](https://semver.org/lang/ja/) に準拠します。
 
+## [Unreleased]
+
+### 追加
+- **英語版エディション**: リポジトリを「1マーケットプレイス・2プラグイン」のモノレポに再構成。英語UIの `flow-inspector-eng` と日本語UIの `flow-inspector` を同一リポジトリ／同一マーケットプレイスから配布（`plugins/<edition>/`）。
+- README を英語主（`README.md`）＋日本語（`README.ja.md`）の2本立てに。スクリーンショットを `docs/images/{en,ja}/` に分離。
+- バックエンド共有の仕組み: `scripts/sync-backend.sh`（日本語版 `server/` を正準として英語版へ同期。表示文字列を翻訳した3ファイルは除外）と `scripts/check-backend-sync.sh`（共有ファイルのドリフト検査）。
+
 ## [0.1.0] - 2026-06-08
 
 初版（公開リリース）。
