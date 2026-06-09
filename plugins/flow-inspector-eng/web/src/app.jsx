@@ -26,7 +26,7 @@ import { SubagentDetailPage, HookDetailPage, CommandDetailPage, SkillCard, ensur
 
 // Node types → ./lib/node-types.js (Phase 3; module also sets window.NODE_TYPES)
 // Preserve values if already set by demo-dataset.js (injected before this script)
-if (!window.X_AUTOPILOT) window.X_AUTOPILOT = null;
+if (!window.SOCIAL_POSTER) window.SOCIAL_POSTER = null;
 if (!window.SIDEBAR || !window.SIDEBAR.length) window.SIDEBAR = [];
 if (!window.__DEMO_FLOW__) window.__DEMO_FLOW__ = null;
 

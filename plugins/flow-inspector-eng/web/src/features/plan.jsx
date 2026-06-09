@@ -2189,9 +2189,9 @@ export function PlanWorkspace({ boardId, flowList, onBack, onOpenFlow, controlle
                   className="plan-saveas-input mono"
                   value={saveAsModal.location}
                   onChange={(e) => setSaveAsModal(m => ({ ...m, location: e.target.value }))}
-                  placeholder="skill/X-Autopilot/"
+                  placeholder="skill/social-poster/"
                 />
-                <div className="plan-saveas-hint">e.g. <code>skill/X-Autopilot/</code> · <code>automation/X-Autopilot/</code></div>
+                <div className="plan-saveas-hint">e.g. <code>skill/social-poster/</code> · <code>automation/social-poster/</code></div>
               </div>
               <div className="plan-saveas-field">
                 <label className="plan-saveas-label">Filename (Version)</label>
@@ -2200,7 +2200,7 @@ export function PlanWorkspace({ boardId, flowList, onBack, onOpenFlow, controlle
                   className="plan-saveas-input mono"
                   value={saveAsModal.name}
                   onChange={(e) => setSaveAsModal(m => ({ ...m, name: e.target.value }))}
-                  placeholder="X-Autopilot-v1"
+                  placeholder="social-poster-v1"
                   autoFocus
                   onKeyDown={(e) => {
                     if (e.key === "Enter" && saveAsModal.name.trim()) {

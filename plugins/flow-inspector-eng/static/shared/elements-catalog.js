@@ -366,7 +366,7 @@ const FI_ELEMENTS = [
     meta: {
       // ── Invocation request (what this node requests in the flow) ──
       request_prompt: "For today's new feature release, create 3 draft posts matching the tone of past posts and prepare to publish",
-      target_files: ["~/.x-history.json"],
+      target_files: ["~/.post-history.json"],
       output_schema: "3 draft options + rationale for each variation (Markdown)",
       arguments_value: "new feature release",
       expected_io: "Receives topic 'new feature release' → 3 drafts matching past post style + user confirmation → post via X API",
@@ -386,12 +386,12 @@ const FI_ELEMENTS = [
       io: { in: "user instruction (keyword matching description) + context", out: "published result + copy of the posted text" },
       // Internal flow — what this skill actually does inside SKILL.md
       subflow: [
-        { title: "Load past posts",             tool: "Bash",     detail: "Run scripts/analyze-history.py to parse ~/.x-history.json and extract recent tone and topic trends" },
+        { title: "Load past posts",             tool: "Bash",     detail: "Run scripts/analyze-history.py to parse ~/.post-history.json and extract recent tone and topic trends" },
         { title: "Reference style guide",       tool: "Read",     detail: "Read style-guide.md / templates/post.md from reference_files to understand writing style rules" },
         { title: "Generate 3 draft options",    tool: "(model)",  detail: "Create 3 varied drafts reflecting the $ARGUMENTS topic and style constraints" },
         { title: "Present 3 options to user",   tool: "user",     detail: "Interactively confirm which option to use and whether any minor edits are needed" },
         { title: "Post via X API",              tool: "Bash",     detail: "Run scripts/post.py (internally calls X API via curl). Pre-approved via Bash(curl *) in allowed-tools." },
-        { title: "Append to history",           tool: "Bash",     detail: "After successful post, append a new entry to ~/.x-history.json" },
+        { title: "Append to history",           tool: "Bash",     detail: "After successful post, append a new entry to ~/.post-history.json" },
       ]
     }
   },

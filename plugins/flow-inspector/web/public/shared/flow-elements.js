@@ -861,7 +861,7 @@ window.FI.TYPE_SPECS = {
       { section: "definition", key: "scripts",         label: "付属スクリプト", desc: "scripts/ 配下の実行可能ファイル",                        multi: true },
       { section: "definition", key: "paths",           label: "自動活性化パス", desc: "このグロブにマッチするファイル編集時のみ自動発火",         multi: true },
     ],
-    definition: `---\nname: example-flow\ndescription: "Xに投稿して" で起動。投稿文を生成して投稿する。\nallowed-tools: Read WebFetch Bash(curl *)\nmodel: sonnet\n---\n\n# X Autopilot スキル\n\n1. 過去の投稿を分析: !\`cat ~/.x-history.json\`\n2. スタイルガイド参照: [style-guide.md](style-guide.md)\n3. 新規投稿文を生成して、ユーザー確認後に投稿`,
+    definition: `---\nname: example-flow\ndescription: "Xに投稿して" で起動。投稿文を生成して投稿する。\nallowed-tools: Read WebFetch Bash(curl *)\nmodel: sonnet\n---\n\n# Social Post Assistant スキル\n\n1. 過去の投稿を分析: !\`cat ~/.post-history.json\`\n2. スタイルガイド参照: [style-guide.md](style-guide.md)\n3. 新規投稿文を生成して、ユーザー確認後に投稿`,
     expandable: true,
   },
   command: {
@@ -2194,7 +2194,7 @@ window.FI.ELEMENTS = [
     meta: {
       // ── 呼び出しリクエスト (このノードがフロー上で何を依頼するか) ──
       request_prompt: "今日の新機能リリースについて、過去投稿のトーンに合わせて 3案つくって投稿準備して",
-      target_files: ["~/.x-history.json"],
+      target_files: ["~/.post-history.json"],
       output_schema: "ドラフト3案 + 各案のバリエーション理由 (Markdown)",
       arguments_value: "新機能リリース",
       expected_io: "「新機能リリース」というトピックを受けて → 過去投稿のスタイルに沿った3つのドラフト + ユーザー確認 → X API で投稿",
@@ -2214,12 +2214,12 @@ window.FI.ELEMENTS = [
       io: { in: "ユーザーの指示文（descriptionと一致するキーワード）+ コンテキスト", out: "投稿済みの結果 + 投稿文の控え" },
       // 内部フロー — このスキルが SKILL.md 内で実際に何をするか
       subflow: [
-        { title: "過去投稿を読み込む",       tool: "Bash",     detail: "scripts/analyze-history.py で ~/.x-history.json を解析し、直近のトーン・話題傾向を抽出" },
+        { title: "過去投稿を読み込む",       tool: "Bash",     detail: "scripts/analyze-history.py で ~/.post-history.json を解析し、直近のトーン・話題傾向を抽出" },
         { title: "スタイルガイド参照",        tool: "Read",     detail: "reference_files の style-guide.md / templates/post.md を読み、文体ルールを把握" },
         { title: "投稿文ドラフトを3案生成",   tool: "(model)",  detail: "$ARGUMENTS のトピックとスタイル制約を反映して、変化を持たせた3つのドラフトを作成" },
         { title: "ユーザーに3案を提示",       tool: "user",     detail: "どの案にするか・微修正したい点があるかを対話で確認" },
         { title: "X API で投稿",              tool: "Bash",     detail: "scripts/post.py を実行 (内部で curl で X API 叩く)。allowed-tools の Bash(curl *) で事前許可済み" },
-        { title: "履歴に追記",                tool: "Bash",     detail: "投稿成功後、~/.x-history.json に新規エントリを append" },
+        { title: "履歴に追記",                tool: "Bash",     detail: "投稿成功後、~/.post-history.json に新規エントリを append" },
       ]
     }
   },

@@ -861,7 +861,7 @@ window.FI.TYPE_SPECS = {
       { section: "definition", key: "scripts",         label: "Scripts",           desc: "Executable files under scripts/",                                          multi: true },
       { section: "definition", key: "paths",           label: "Auto-activation Paths", desc: "Auto-fires only when editing files matching this glob",                multi: true },
     ],
-    definition: `---\nname: example-flow\ndescription: Activated by "Post to X" or "make a tweet". Generates and posts content.\nallowed-tools: Read WebFetch Bash(curl *)\nmodel: sonnet\n---\n\n# X Autopilot Skill\n\n1. Analyze past posts: !\`cat ~/.x-history.json\`\n2. Read style guide: [style-guide.md](style-guide.md)\n3. Generate new post text, confirm with user, then post`,
+    definition: `---\nname: example-flow\ndescription: Activated by "Post to X" or "make a tweet". Generates and posts content.\nallowed-tools: Read WebFetch Bash(curl *)\nmodel: sonnet\n---\n\n# Social Post Assistant\n\n1. Analyze past posts: !\`cat ~/.post-history.json\`\n2. Read style guide: [style-guide.md](style-guide.md)\n3. Generate new post text, confirm with user, then post`,
     expandable: true,
   },
   command: {
@@ -2195,7 +2195,7 @@ window.FI.ELEMENTS = [
     meta: {
       // ── Call request (what this node requests in the flow) ──
       request_prompt: "For today's new feature release, create 3 draft posts matching the tone of past posts and prepare for publishing",
-      target_files: ["~/.x-history.json"],
+      target_files: ["~/.post-history.json"],
       output_schema: "3 draft options + variation rationale for each (Markdown)",
       arguments_value: "new feature release",
       expected_io: "Receive 'new feature release' topic → 3 drafts in the style of past posts + user confirmation → post via X API",
@@ -2215,12 +2215,12 @@ window.FI.ELEMENTS = [
       io: { in: "user's instruction (keyword matching description) + context", out: "posted result + copy of post text" },
       // Internal flow — what this skill actually does inside SKILL.md
       subflow: [
-        { title: "Load past posts",          tool: "Bash",     detail: "Use scripts/analyze-history.py to parse ~/.x-history.json and extract recent tone and topic trends" },
+        { title: "Load past posts",          tool: "Bash",     detail: "Use scripts/analyze-history.py to parse ~/.post-history.json and extract recent tone and topic trends" },
         { title: "Reference style guide",    tool: "Read",     detail: "Read style-guide.md / templates/post.md from reference_files to understand writing style rules" },
         { title: "Generate 3 draft options", tool: "(model)",  detail: "Create 3 varied drafts reflecting $ARGUMENTS topic and style constraints" },
         { title: "Present 3 options to user", tool: "user",   detail: "Interactively confirm which option to use and any minor revisions" },
         { title: "Post via X API",            tool: "Bash",    detail: "Run scripts/post.py (which calls X API via curl internally). Pre-allowed via Bash(curl *) in allowed-tools" },
-        { title: "Append to history",         tool: "Bash",    detail: "After successful post, append new entry to ~/.x-history.json" },
+        { title: "Append to history",         tool: "Bash",    detail: "After successful post, append new entry to ~/.post-history.json" },
       ]
     }
   },
