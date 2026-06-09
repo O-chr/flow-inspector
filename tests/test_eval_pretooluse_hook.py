@@ -20,7 +20,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-HOOK = Path(__file__).resolve().parent.parent / "server" / "eval_pretooluse_hook.py"
+HOOK = Path(__file__).resolve().parent.parent / "plugins" / "flow-inspector" / "server" / "eval_pretooluse_hook.py"
 
 
 def _run_hook(event: dict, *, approved: str | None = None, log_path: str | None = None):

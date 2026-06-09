@@ -26,7 +26,7 @@ import pytest
 
 # --- 1. Put server/ on sys.path -------------------------------------------
 REPO_ROOT = Path(__file__).resolve().parent.parent
-SERVER_DIR = REPO_ROOT / "server"
+SERVER_DIR = REPO_ROOT / "plugins" / "flow-inspector" / "server"
 if str(SERVER_DIR) not in sys.path:
     sys.path.insert(0, str(SERVER_DIR))
 

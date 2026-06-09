@@ -1,16 +1,19 @@
 {
   "name": "flow-inspector-marketplace",
-  "owner": {
-    "name": "chr"
-  },
+  "owner": { "name": "chr" },
   "metadata": {
-    "description": "Marketplace hosting the flow-inspector plugin."
+    "description": "Marketplace hosting the Flow Inspector plugin (English and Japanese editions)."
   },
   "plugins": [
     {
+      "name": "flow-inspector-eng",
+      "source": "./plugins/flow-inspector-eng",
+      "description": "Visualize and edit your Claude Code configuration as interactive flow diagrams (English edition)."
+    },
+    {
       "name": "flow-inspector",
-      "source": "./",
-      "description": "Claude Codeの設定をフロー図で可視化・編集するダッシュボード。"
+      "source": "./plugins/flow-inspector",
+      "description": "Claude Code の設定をフロー図で可視化・編集するダッシュボード（日本語版）。"
     }
   ]
 }
