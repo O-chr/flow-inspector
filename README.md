@@ -1,162 +1,169 @@
 # Flow Inspector
 
-> Claude Code の設定をフロー図で可視化・編集するローカルダッシュボード（Claude Code プラグイン）。
+**English** · [日本語版 README → `README.ja.md`](README.ja.md)
 
-Flow Inspector は、あなたの PC の Claude Code 設定（**スキル / サブエージェント / フック / MCP / コマンド / CLAUDE.md**）を自動スキャンして、「いま自分の Claude Code がどう動くのか」を**フロー図**で見える化し、**JSON を書かずに**（ノーコードで）編集できるツールです。
+> A local dashboard Claude Code plugin that visualizes and edits your Claude Code configuration as flow diagrams.
+>
+> Available in two editions from this one marketplace: **`flow-inspector-eng`** (English UI) and **`flow-inspector`** (Japanese UI). Install whichever you prefer.
 
-![Flow Inspector ダッシュボード — CLAUDE.md 階層と設定スタックの可視化](docs/images/dashboard.png)
+Flow Inspector automatically scans your Claude Code configuration — **skills / subagents / hooks / MCP servers / commands / CLAUDE.md** — and lets you see exactly how your Claude Code is set up through **flow diagrams**, with the ability to edit everything **without writing JSON** (no-code).
 
-> ※ 上図はサンプル設定での表示例です。
+![Flow Inspector dashboard — visualizing the CLAUDE.md hierarchy and configuration stack](docs/images/en/dashboard.png)
 
-- 🗺 **ダッシュボード** — `~/.claude/` を解析して、スキル・サブエージェント・フック・コマンド・MCP・CLAUDE.md 階層を一覧表示
-- 🔀 **フロー図** — 各設定の実行フローをノード／エッジで表示。ドラッグでノードを追加・編集
-- ✏️ **ノーコード編集** — ノードをクリック → 設定タブで値を編集 → 「同期」で実ファイルに書き戻し
-- 🧪 **eval ワークベンチ** — フローのバージョン管理・テストケース・評価器（LLM / コード）で挙動を検証
+> Note: The screenshot above shows an example configuration.
 
-## 前提条件
+- 🗺 **Dashboard** — Parses `~/.claude/` and displays your skills, subagents, hooks, commands, MCP servers, and CLAUDE.md hierarchy at a glance
+- 🔀 **Flow diagrams** — Visualizes the execution flow of each configuration as nodes and edges; drag to add or rearrange nodes
+- ✏️ **No-code editing** — Click a node → edit values in the settings panel → press "Sync" to write changes back to the actual files
+- 🧪 **Eval workbench** — Validate behavior with flow versioning, test cases, and evaluators (LLM-based or code-based)
 
-- **Claude Code（`claude` CLI）が認証済み**で PATH にあること（AI 補助機能が利用します。API キーは不要）
-- **Python 3.10 以上**（macOS / Linux。Windows は experimental）
-- UI はビルド済みバンドルを同梱しており**オフラインでも起動**します（Web フォントのみ CDN 取得＝オフライン時はシステムフォントにフォールバック）。UI ソースは `web/` に同梱、再ビルド手順は [BUILD.md](BUILD.md) 参照
+## Prerequisites
 
-## インストール
+- **Claude Code (`claude` CLI) must be authenticated** and available on your PATH (used for AI-assisted features; no separate API key required)
+- **Python 3.10 or higher** (macOS / Linux; Windows is experimental)
+- The UI ships with a pre-built bundle and **works offline** (only web fonts are fetched from a CDN — falls back to system fonts when offline). UI source is included in `web/`; see [BUILD.md](BUILD.md) for rebuild instructions.
 
-Claude Code 上でプラグインとして導入します（このリポジトリ自体がマーケットプレイスを兼ねています）:
+## Installation
+
+Install as a Claude Code plugin (this repository also serves as its own marketplace):
 
 ```
-# 1. このリポジトリをマーケットプレイスとして追加
+# 1. Add this repository as a marketplace source
 /plugin marketplace add chr/flow-inspector
 
-# 2. プラグインをインストール
+# 2. Install the plugin (English UI)
+/plugin install flow-inspector-eng@flow-inspector-marketplace
+
+# Or, if you prefer a Japanese UI, install this one instead:
 /plugin install flow-inspector@flow-inspector-marketplace
 ```
 
-> `chr/flow-inspector` は配布元の GitHub `ユーザー名/リポジトリ名` です。フォークやミラーから入れる場合はそこに合わせてください。
+> `chr/flow-inspector` refers to the GitHub `username/repository` of the distribution source. If you are installing from a fork or mirror, substitute the appropriate value.
 
-依存（FastAPI / uvicorn / PyYAML）の手動インストールは不要です。初回に下記のコマンドを実行したとき、プラグイン外の専用 venv（`~/.cache/flow-inspector/venv`）へ自動で入ります。
+Dependencies (FastAPI / uvicorn / PyYAML) do not need to be installed manually. The first time you run the command below, they are installed automatically into a dedicated venv outside the plugin directory (`~/.cache/flow-inspector/venv`).
 
-## 使い方（3ステップ）
+## Usage (3 steps)
 
-専門的な知識がなくても、基本は次の3ステップで使えます。
+No specialized knowledge is required. The basic workflow is three steps.
 
-### 1. ダッシュボードを開く
+### 1. Open the dashboard
 
-Claude Code で次のコマンドを実行します（`/flow` まで入力すると候補から選べます）:
-
-```
-/flow-inspector:flow-inspector
-```
-
-数秒で、ブラウザにダッシュボードが自動で開きます。
-
-### 2. 設定を一覧で確認する
-
-いまの Claude Code が、どのスキル・コマンド・ルール（CLAUDE.md）で動作しているかを一覧で確認できます。
-この段階では AI は呼ばれない（＝**追加コストなし**）ため、自由にクリックして内容を確認できます。
-
-### 3. 気になる設定を「フロー図」にする
-
-詳しく見たいスキルやコマンドの行で **「▶ フロー化」** を押すと、その設定を AI が解析し、「何を・どの順序で実行するか」をフロー図として表示します。
-
-![スキル一覧と「▶ フロー化」ボタン](docs/images/skills.png)
-
-- フロー化されるのは**押した項目だけ**です（押さなければコストは発生しません）。
-- 図のノード（四角）をクリックすると、内容の確認・編集ができます。
-- 編集内容は、画面右上の **「⇡ 同期・反映」** を押すまで実際の設定ファイルには反映されません。安心して試せます。
-
-フロー化すると、設定の処理の流れが次のような図として表示されます:
-
-![weather-reporter のフロー図](docs/images/flow.png)
-
-ノード（四角）をクリックすると、右側のパネルでそのステップの役割・入力・出力・設定を確認・編集できます（コードや JSON を直接書く必要はありません）:
-
-![ノードをクリックして内容を編集するインスペクタ](docs/images/node-edit.png)
-
-### 終了する
-
-使い終わったら、次のコマンドで停止します。
+Run the following command in Claude Code (you can type `/flow` and select from the autocomplete suggestions):
 
 ```
-/flow-inspector:flow-inspector stop
+/flow-inspector-eng:flow-inspector
 ```
 
-> **コマンド名について**: スラッシュコマンドは `プラグイン名:スキル名` の形式で、本プラグインは名称が共通のため `/flow-inspector:flow-inspector` となります。`/flow` まで入力して候補から選ぶと簡単です。
+After a few seconds, the dashboard opens automatically in your browser.
 
-### （上級者向け）手動で起動・停止する
+### 2. Review your configuration
 
-スラッシュコマンドを使えば下記は自動で行われます。手動起動は開発・デバッグ用です。
+See at a glance which skills, commands, and rules (CLAUDE.md) your current Claude Code session is operating with.
+At this stage no AI is invoked — **there is no additional cost** — so feel free to click around and explore.
+
+### 3. Turn a configuration item into a flow diagram
+
+On any skill or command row you want to inspect, press **"▶ Flow-ize"** to have the AI analyze that configuration and display it as a flow diagram showing what it does and in what order.
+
+![Skill list with the "▶ Flow-ize" button](docs/images/en/skills.png)
+
+- Only the **item you clicked** is flowized (no cost is incurred unless you press the button).
+- Click any node (rectangle) in the diagram to view or edit its details.
+- Edits are not written to your actual configuration files until you press **"⇡ Sync"** in the top-right corner — so you can experiment freely.
+
+Once flowized, a skill's execution logic is displayed as a diagram like this:
+
+![Flow diagram for weather-reporter](docs/images/en/flow.png)
+
+Clicking a node opens a right-side panel where you can inspect and edit that step's role, inputs, outputs, and settings — no need to write code or JSON directly:
+
+![Inspector panel for editing a node](docs/images/en/node-edit.png)
+
+### Stopping the server
+
+When you are done, run the following command to stop the server:
+
+```
+/flow-inspector-eng:flow-inspector stop
+```
+
+> **About the command name**: Slash commands follow the format `plugin-name:skill-name`. For this plugin the plugin name is `flow-inspector-eng` and the skill name is `flow-inspector`, giving `/flow-inspector-eng:flow-inspector`. Type `/flow` and select from the suggestions for convenience.
+
+### (Advanced) Manual start and stop
+
+The slash command handles all of this automatically. Manual startup is intended for development and debugging only.
 
 ```bash
-# 専用 venv を用意（初回のみ。依存をシステムや他プロジェクトと混ぜない）
+# Set up the dedicated venv (first time only — keeps dependencies isolated from your system and other projects)
 FI_VENV="$HOME/.cache/flow-inspector/venv"
 python3 -m venv "$FI_VENV"
 "$FI_VENV/bin/pip" install -r "<plugin>/server/requirements.txt"
 
-# その venv で起動（ポートは環境変数 FLOW_INSPECTOR_PORT で変更可）
+# Start the server using that venv (override the port with the FLOW_INSPECTOR_PORT env var)
 cd "<plugin>" && "$FI_VENV/bin/python" -m uvicorn server.main:app --host 127.0.0.1 --port 8077
 ```
 
-停止: macOS / Linux は `pkill -f "uvicorn server.main:app"`、Windows は `taskkill /F /IM python.exe`（該当プロセスのみ）。
+To stop: on macOS / Linux run `pkill -f "uvicorn server.main:app"`; on Windows use `taskkill /F /IM python.exe` (targeting the relevant process only).
 
-## eval（評価）— ワークフローの動作を検証する（任意・やや高度）
+## Eval — Validating workflow behavior (optional, intermediate)
 
-作成・調整したワークフローが意図どおりに動作するかを検証する機能です。テストのように、入力例を与えて期待どおりかを判定します。日常的な利用では必須ではありません。
+This feature lets you verify that a workflow you have built or tuned behaves as intended. Think of it as automated testing: you provide example inputs and define pass/fail criteria. It is not required for everyday use.
 
-フロー図の上部にある **「⚖ Eval」** から開きます。手順は3つです:
+Access it via the **"⚖ Eval"** button at the top of any flow diagram. The process has three steps:
 
-1. **テストケースを用意する** — 「この入力に対して、こうあってほしい」という例を登録します（**AI による自動生成**も可能です）。
-2. **評価軸（合格条件）を決める** — 2種類から選べます:
-   - **AI による判定** — 「丁寧な表現になっているか」「必要な項目が揃っているか」などを文章で指定すると、AI が合否を判定します。
-   - **コードによる判定** — 機械的に厳密な確認を行いたい場合に使います（短い Python。エンジニア向け）。
+1. **Prepare test cases** — Register examples of the form "given this input, expect this output" (**AI-assisted auto-generation** is also available).
+2. **Define evaluators (pass criteria)** — Choose from two types:
+   - **AI judgment** — Describe the criteria in natural language (e.g., "Is the tone polite?", "Are all required fields present?") and the AI determines pass or fail.
+   - **Code judgment** — For cases where you need strict, deterministic checks (short Python snippet; intended for developers).
 
-   ![評価軸 — AI 判定（LLM）とコード判定](docs/images/eval.png)
+   ![Evaluator configuration — AI (LLM) and code-based judgment](docs/images/en/eval.png)
 
-3. **まとめて実行する** — すべての「テストケース × 評価軸」を実行し、ケースごとの合否を一覧で表示します。
+3. **Run all** — Executes every combination of test case × evaluator and displays a pass/fail summary per case.
 
-   ![実行結果 — ケースごとの合否と合格率](docs/images/eval-run.png)
+   ![Run results — per-case pass/fail and overall pass rate](docs/images/en/eval-run.png)
 
-ワークフローの修正前後で結果を比較すれば、変更による改善・悪化を確認できます。
-ワークフローを**実際に実行**して出力を生成し、その出力を評価することもできます。その際、削除や送信などの**副作用のある操作は既定でブロック**され、必要なものだけ承認して実行できます。
+Comparing results before and after a workflow change lets you confirm whether the change was an improvement or a regression.
+You can also **actually execute** the workflow to generate real output, then evaluate that output. Side-effectful operations (deletions, sends, etc.) are **blocked by default** and require explicit approval before running.
 
-> 実行時は AI（判定・テストケース生成）を呼び出すためトークンを消費します。コード評価器の注意点は下記「既知の制約」を参照してください。
+> Running eval consumes tokens for AI judgment and test case generation. See the "Known Limitations" section below for notes on the code evaluator.
 
-## トークン消費について
+## Token usage
 
-- **起動・ダッシュボード表示は 0 トークン**です。設定のスキャンとフロー図化は決定論的に行われ、AI（Claude）は呼ばれません。
-- AI を使う（＝トークンを消費する）のは次の操作だけです:
-  - **スキルのフロー化（アノテート）** — 起動時は未フロー化スキルの**件数を知らせるだけ**で、AI は呼ばれません。実際のフロー化は、ダッシュボードで各スキル/コマンドの **「▶ フロー化」ボタン**（または一覧上部の一括「▶ フロー化 (N)」）を**自分で押したとき**だけ走ります。押した分だけ AI を呼びます。
-  - 各種 **チャット / 設計 / eval の生成・判定** ボタンを押したとき。
-- フロー化は 1 スキルにつき 1 回 AI を呼びます。冪等＆キャッシュ付きなので、一度フロー化したスキルは再実行されず、プラグインを再起動しても保持されます。
+- **Starting the server and viewing the dashboard costs 0 tokens.** Configuration scanning and flow diagram rendering are deterministic — the AI (Claude) is never invoked.
+- AI is used (tokens are consumed) only for these explicit actions:
+  - **Flowizing (annotating) a skill** — On startup, Flow Inspector only reports how many unflowized skills exist; the AI is not called. Actual flowization runs only when you **press the "▶ Flow-ize" button** (or the bulk "▶ Flow-ize (N)" button) for a specific skill or command in the dashboard. One button press = one AI call.
+  - Pressing any **Chat / Design / Eval generate or judge** button.
+- Flowization calls the AI once per skill. The result is idempotent and cached: a skill that has already been flowized will not be re-processed, and the result persists across plugin restarts.
 
-## データの保存先
+## Data storage
 
-編集の作業コピー・プランボード・通知・eval 結果は **`~/.cache/flow-inspector/`** に保存されます。
-本番の `~/.claude/` 配下は、ダッシュボードで明示的に「同期（push）」するまで変更されません（安全側）。
+Working copies of edits, plan boards, notifications, and eval results are stored in **`~/.cache/flow-inspector/`**.
+Your live `~/.claude/` directory is never modified until you explicitly press "Sync (push)" in the dashboard — changes are safe by default.
 
-## 既知の制約
+## Known limitations
 
-- UI はビルド済み JS/CSS バンドル（`static/assets/`）を同梱。オフラインでも動作します（Web フォントのみ CDN）。UI ソースは `web/`（React 18 + Vite）に同梱しており、`cd web && npm install && npm run build` で `static/` を再生成できます（詳細は [BUILD.md](BUILD.md)）。
-- eval の **コード評価器は任意の Python を実行**します（サンドボックスは subprocess 分離・環境変数を除去・実行時間制限つきですが、完全な隔離ではありません）。**信頼できるコードのみ登録**してください。サーバーを `127.0.0.1` 以外に公開する場合は特に注意してください。
-- サーバーは `127.0.0.1`（ローカルのみ）にバインドします。
-- Windows サポートは experimental（起動・停止コマンドは macOS / Linux 前提）。
+- The UI ships with a pre-built JS/CSS bundle (`static/assets/`) and works offline (web fonts require CDN access). The UI source is included in `web/` (React 18 + Vite); run `cd web && npm install && npm run build` to regenerate `static/` (see [BUILD.md](BUILD.md) for details).
+- The eval **code evaluator executes arbitrary Python** (the sandbox uses subprocess isolation, strips environment variables, and enforces a timeout — but it is not a full sandbox). **Only register code you trust.** Exercise particular caution if you expose the server on an address other than `127.0.0.1`.
+- The server binds to `127.0.0.1` (localhost only).
+- Windows support is experimental (start/stop commands assume macOS / Linux).
 
-## ライセンス
+## License
 
 [MIT](LICENSE) © 2026 chr
 
-個人・商用を問わず自由に利用・改変できます。
-なお、本プロジェクトは将来のバージョンでライセンスが変更される可能性があります（各バージョンは、その時点で付与されたライセンスのもとで有効です）。
+Free to use and modify for personal and commercial purposes.
+Note: the license for this project may change in future versions (each release remains valid under the license in effect at the time it was published).
 
-## 開発・テスト
+## Development & testing
 
 ```bash
 pip install -r server/requirements.txt -r requirements-dev.txt
 PYTHONPATH=server python -m pytest tests/ -q
 ```
 
-フロントエンド（`web/`）を改変したら、[BUILD.md](BUILD.md) に従って再ビルドし、生成物を `static/` に反映してください:
+If you modify the frontend (`web/`), follow [BUILD.md](BUILD.md) to rebuild and copy the output to `static/`:
 
 ```bash
-cd web && npm install && npm run build   # base=/static/ で web/dist/ を生成
-# 出力を static/ に反映（BUILD.md 参照）
+cd web && npm install && npm run build   # generates web/dist/ with base=/static/
+# copy output to static/ (see BUILD.md)
 ```
